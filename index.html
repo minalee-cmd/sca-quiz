@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCA 센서리 스킬 파운데이션 — 예상 기출문제</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+    background: #f5f4f0;
+    color: #1a1a18;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 640px;
+    width: 100%;
+  }
+  header h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+  header p { font-size: 14px; color: #666; }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    padding: 2rem;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  /* Progress */
+  .progress-bar-bg {
+    background: #e8e7e2;
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 1.5rem;
+  }
+  .progress-bar-fill {
+    height: 6px;
+    border-radius: 99px;
+    background: #1D9E75;
+    transition: width 0.4s ease;
+  }
+
+  .q-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .q-num { font-size: 13px; color: #888; }
+  .q-score { font-size: 13px; font-weight: 600; color: #1a1a18; }
+
+  .cat-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: #f0efea;
+    color: #666;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.65;
+    color: #1a1a18;
+    margin-bottom: 1.25rem;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .opt-btn {
+    text-align: left;
+    background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.18);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 14px;
+    color: #1a1a18;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    line-height: 1.55;
+    font-family: inherit;
+  }
+  .opt-btn:hover:not(:disabled) {
+    background: #f5f4f0;
+    border-color: rgba(0,0,0,0.28);
+  }
+  .opt-btn.correct {
+    background: #EAF3DE;
+    border-color: #639922;
+    color: #27500A;
+  }
+  .opt-btn.wrong {
+    background: #FCEBEB;
+    border-color: #E24B4A;
+    color: #501313;
+  }
+  .opt-btn.reveal {
+    background: #EAF3DE;
+    border-color: #639922;
+    color: #27500A;
+  }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.65;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #EAF3DE; color: #27500A; border: 0.5px solid #639922; }
+  .feedback.ng { background: #FCEBEB; color: #501313; border: 0.5px solid #E24B4A; }
+
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+  .next-btn {
+    padding: 10px 24px;
+    background: #1a1a18;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .next-btn:hover { opacity: 0.85; }
+
+  /* Result */
+  .result-box { text-align: center; padding: 1rem 0.5rem; }
+  .result-score { font-size: 56px; font-weight: 700; color: #1a1a18; margin-bottom: 0.4rem; line-height: 1; }
+  .result-sub { font-size: 16px; color: #888; margin-bottom: 0.5rem; }
+  .result-msg { font-size: 15px; color: #444; margin-bottom: 1.75rem; }
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+  .r-card {
+    background: #f5f4f0;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .r-card-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .r-card-val { font-size: 22px; font-weight: 600; }
+  .r-green { color: #3B6D11; }
+  .r-red { color: #A32D2D; }
+  .r-blue { color: #185FA5; }
+
+  .retry-btn {
+    padding: 12px 36px;
+    background: #1a1a18;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .retry-btn:hover { opacity: 0.85; }
+
+  /* Review section */
+  .review-section { margin-top: 2rem; text-align: left; }
+  .review-section h2 { font-size: 15px; font-weight: 600; margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 0.5px solid rgba(0,0,0,0.1); }
+  .review-item { margin-bottom: 1.25rem; padding: 14px 16px; border-radius: 10px; border: 0.5px solid rgba(0,0,0,0.1); background: #fafaf8; }
+  .review-item.correct-item { border-color: #639922; background: #f4faea; }
+  .review-item.wrong-item { border-color: #E24B4A; background: #fff5f5; }
+  .review-q { font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #1a1a18; line-height: 1.5; }
+  .review-status { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .review-status.ok { color: #3B6D11; }
+  .review-status.ng { color: #A32D2D; }
+  .review-exp { font-size: 12px; color: #555; line-height: 1.6; }
+
+  @media (max-width: 480px) {
+    .card { padding: 1.25rem; }
+    .result-grid { grid-template-columns: 1fr 1fr; }
+    .result-score { font-size: 44px; }
+    header h1 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍵 SCA 센서리 스킬 파운데이션</h1>
+  <p>테이스팅의 예술과 과학 — 예상 기출문제 15문항</p>
+</header>
+
+<div class="card" id="app"></div>
+
+<script>
+const questions = [
+  {
+    cat: "센서리 평가 기초",
+    q: "센서리 평가(Sensory Evaluation)의 정의로 가장 올바른 것은?",
+    opts: [
+      "화학적 성분 분석을 통해 커피의 품질을 수치화하는 방법",
+      "인간의 5가지 감각을 통해 인식되는 반응을 촉진하고, 측정하고, 분석 및 해석하는 과학적 방법",
+      "커피의 외관만을 기준으로 품질을 판별하는 방법",
+      "훈련된 패널이 커피의 선호도를 주관적으로 기록하는 방법"
+    ],
+    ans: 1,
+    exp: "센서리 평가는 인간의 5가지 감각(시각, 후각, 촉각, 미각, 청각)을 통해 인식되는 반응을 촉진하고, 측정하고, 분석 및 해석하는 과학적 방법입니다."
+  },
+  {
+    cat: "센서리 평가 방법",
+    q: "세 가지 센서리 평가 방법 중 '차이 평가(Difference)'의 특징으로 옳은 것은?",
+    opts: [
+      "주관적(Subjective)이며 소비자 대상 테스트에 주로 활용된다",
+      "훈련되고 칼리브레이션 된 패널이 반드시 필요하다",
+      "객관적(Objective)이며 대표 방식은 트라이앵글레이션 검사법이다",
+      "특정 상품의 선호도와 품질에 대한 인상을 측정하는 것이 목적이다"
+    ],
+    ans: 2,
+    exp: "차이 평가는 두 개 이상의 샘플이 지각적으로 다른지, 그 차이가 얼마나 큰지 판별하는 방법으로 객관적(Objective)이며 대표 방식은 트라이앵글레이션 검사법(Triangulation Test)입니다."
+  },
+  {
+    cat: "감각과 지각",
+    q: "자극이 지각이 되기까지의 과정을 올바른 순서로 나열한 것은?",
+    opts: [
+      "자극 → 뇌 → 감각 기관 → 지각 → 반응",
+      "감각 기관 → 자극 → 뇌 → 반응 → 지각",
+      "자극 → 감각 기관 → 뇌 → 지각 → 반응",
+      "자극 → 지각 → 감각 기관 → 뇌 → 반응"
+    ],
+    ans: 2,
+    exp: "자극(Stimulus) → 감각 기관(Sense Organ) → 뇌(Brain) → 지각(Perception) → 반응(Response)의 순서입니다. 지각은 개인의 경험과 편향(Bias)에 따라 달라질 수 있습니다."
+  },
+  {
+    cat: "플레이버의 해부학",
+    q: "플레이버(Flavor)를 구성하는 요소의 조합으로 옳은 것은?",
+    opts: [
+      "미각 + 시각 + 청각",
+      "미각 + 후각 + 입의 감각(촉각)",
+      "후각 + 시각 + 입의 감각",
+      "미각 + 청각 + 촉각"
+    ],
+    ans: 1,
+    exp: "플레이버는 미각(구강의 미뢰) + 후각(후비강성 경로를 통한 향 지각) + 입의 감각(온도, 무게감 등 촉각 수용기)의 조합으로 이루어집니다. 플레이버 지각의 아주 큰 부분은 '후각'에서 비롯됩니다."
+  },
+  {
+    cat: "후각 경로",
+    q: "커피를 마실 때 아로마(Aroma)와 플레이버의 후각적 요소를 인식하는 핵심 통로는?",
+    opts: [
+      "전비강성 경로(Orthonasal) — 코를 통해 숨을 들이쉴 때",
+      "후비강성 경로(Retronasal) — 구강 뒤쪽을 통해 숨을 내쉴 때",
+      "미각 수용체 — 혀의 미뢰를 통해",
+      "촉각 수용기 — 입 안의 온도 감지를 통해"
+    ],
+    ans: 1,
+    exp: "후비강성(Retronasal) 경로는 구강 뒤쪽을 통해 숨을 내쉴 때 작동하며, 커피를 마실 때 아로마와 플레이버의 후각적 요소를 인식하는 핵심 통로입니다. 전비강성 경로는 분쇄 커피의 프래그런스 평가에 사용됩니다."
+  },
+  {
+    cat: "기본 맛",
+    q: "커피에 당분이 거의 없음에도 단맛이 느껴지는 이유로 옳은 것은?",
+    opts: [
+      "커피의 산미(Acidity)가 단맛을 직접 생성하기 때문",
+      "로스팅 과정에서 당분이 생성되기 때문",
+      "교차감각적 지각(Crossmodal Perception)으로 인해 단 음식의 아로마를 후각으로 감지하면 뇌가 이를 혀의 단맛으로 착각하기 때문",
+      "커피에 감칠맛(Umami) 성분이 단맛으로 변환되기 때문"
+    ],
+    ans: 2,
+    exp: "커피에는 다량의 탄수화물(당)이 없지만, 교차감각적 지각(Crossmodal Perception) 때문에 단맛을 느낍니다. 단 음식을 떠올리게 하는 아로마를 후각으로 감지하면, 우리 뇌가 이를 혀의 단맛으로 착각하여 인지하게 됩니다."
+  },
+  {
+    cat: "핵심 센서리 속성",
+    q: "마우스필(Mouthfeel)의 구성 요소가 아닌 것은?",
+    opts: [
+      "무게감(Heaviness)",
+      "점도 및 질감(Texture)",
+      "떫음(Astringency)",
+      "온도(Temperature)"
+    ],
+    ans: 3,
+    exp: "마우스필은 커피 브루가 입 안에 있을 때 느껴지는 촉각적 감각으로, 온도는 제외됩니다. 구성 요소는 무게감(Heaviness), 점도 및 질감(Texture), 떫음(Astringency — 입 안을 건조하게 하는 성질)입니다."
+  },
+  {
+    cat: "플레이버 휠",
+    q: "WCR 커피 테이스터의 플레이버 휠에서 9가지 주요 카테고리에 해당하지 않는 것은?",
+    opts: [
+      "플로럴(Floral)",
+      "그린/식물성(Green/Vegetative)",
+      "스모키(Smoky)",
+      "신/발효된(Sour/Fermented)"
+    ],
+    ans: 2,
+    exp: "플레이버 휠의 9가지 주요 카테고리는 로스티드, 향신료, 견과류/코코아, 달콤한, 플로럴, 과일의, 신/발효된, 그린/식물성, 기타입니다. '스모키(Smoky)'는 독립 카테고리가 아닙니다."
+  },
+  {
+    cat: "커핑 프로토콜",
+    q: "SCA 커핑 프로토콜에서 물 붓기(Pour) 단계의 적정 수온은?",
+    opts: [
+      "80~85°C",
+      "90~96°C",
+      "97~100°C",
+      "70~80°C"
+    ],
+    ans: 1,
+    exp: "SCA 커핑 프로토콜에서 물 붓기(Pour) 단계에는 90~96°C의 물을 사용합니다. 이후 3~5분간 우리기(Steep)를 진행합니다."
+  },
+  {
+    cat: "커핑 프로토콜",
+    q: "SCA 커핑 프로토콜의 단계를 올바른 순서로 나열한 것은?",
+    opts: [
+      "계량 → 분쇄 → 프래그런스 → 물 붓기 → 우리기 → 브레이크 → 스키밍 → 쿨링 → 테이스팅",
+      "분쇄 → 계량 → 물 붓기 → 프래그런스 → 우리기 → 스키밍 → 브레이크 → 쿨링 → 테이스팅",
+      "계량 → 프래그런스 → 분쇄 → 물 붓기 → 브레이크 → 우리기 → 스키밍 → 테이스팅 → 쿨링",
+      "계량 → 분쇄 → 물 붓기 → 우리기 → 프래그런스 → 브레이크 → 스키밍 → 쿨링 → 테이스팅"
+    ],
+    ans: 0,
+    exp: "SCA 커핑 프로토콜의 순서: 계량(+/-0.1g) → 분쇄 → 프래그런스 평가(분쇄 후 15분 이내) → 물 붓기(90~96°C) → 우리기(3~5분) → 브레이크(표면을 깨며 3번 젓기, 아로마 평가) → 스키밍(거품/찌꺼기 걷어내기) → 쿨링(8~10분 대기, 70°C) → 테이스팅"
+  },
+  {
+    cat: "커핑 환경",
+    q: "커핑 세션에서 반드시 제거해야 할 '방해 요소'로 옳지 않은 것은?",
+    opts: [
+      "향수 및 핸드크림",
+      "커피 테이블 위의 개인 음료",
+      "커핑컵(200~350ml 강화유리/세라믹)",
+      "시끄러운 소음 및 화려한 장식"
+    ],
+    ans: 2,
+    exp: "커핑컵(200~350ml 강화유리/세라믹)은 필수 장비(Must Have)입니다. 방해 요소(Must Not Have)는 향수·핸드크림·꽃 장식 등 후각 방해 요소, 개인 소지품·화려한 장식·소음 등 시각/청각 방해 요소, 커피 테이블 위 개인 음료 등 미각 방해 요소입니다."
+  },
+  {
+    cat: "스페셜티 커피",
+    q: "스페셜티 커피와 코모디티 커피의 관계를 가장 잘 설명한 것은?",
+    opts: [
+      "스페셜티와 코모디티는 완전히 단절된 이분법적 개념이다",
+      "스페셜티 커피는 반드시 특정 인증을 받아야만 정의될 수 있다",
+      "커피가 더 뚜렷하고 독특한 내재적·외재적 속성을 가질수록 연속선 상에서 스페셜티에 가까워진다",
+      "코모디티 커피는 센서리 평가 대상이 아니다"
+    ],
+    ans: 2,
+    exp: "스페셜티와 코모디티는 단절된 개념이 아닙니다. 커피가 더 뚜렷하고 독특한 내재적 속성(플레이버 프로파일, 로스팅, 등급)과 외재적 속성(원산지, 인증, 농장명)을 가질수록 연속선 상에서 더 스페셜티에 가까워지며 시장에서 높은 가치를 인정받습니다."
+  },
+  {
+    cat: "커핑 폼",
+    q: "SCA 커핑 폼 중 '객관적 기록(Objective)'을 목적으로 하며, 편향을 줄이기 위해 CATA(해당되는 것 모두 고르기) 방식을 활용하는 것은?",
+    opts: [
+      "정동 평가(Affective) 폼",
+      "묘사 평가(Descriptive) 폼",
+      "차이 평가(Difference) 폼",
+      "트라이앵글 테스트 폼"
+    ],
+    ans: 1,
+    exp: "묘사 평가(Descriptive) 폼은 특정 센서리 속성의 식별과 강도(Intensity) 측정을 초점으로 하며, 객관적 기록(Objective)이 특징입니다. CATA 방식을 활용해 편향을 줄입니다. 반면 정동 평가 폼은 주관적 인상과 선호도 평가에 활용됩니다."
+  },
+  {
+    cat: "커핑의 목적",
+    q: "커핑(Cupping)의 5가지 핵심 목적이 아닌 것은?",
+    opts: [
+      "품질 검사 — 결점두 스크리닝 및 일관성 확인",
+      "생두 구매 — 가치 사슬 전반에서의 구매 결정",
+      "소비자 선호도 조사 — 최종 소비자 대상 마케팅 전략 수립",
+      "블렌딩 — 블렌드를 구성할 원두 조합 선정"
+    ],
+    ans: 2,
+    exp: "커핑의 5가지 핵심 목적은 ①품질 검사, ②상품 개발(로스팅 프로파일 및 레시피 테스트), ③플레이버 평가(커피 고유의 프로파일 식별), ④블렌딩, ⑤생두 구매입니다. '소비자 선호도 조사'는 해당하지 않습니다."
+  },
+  {
+    cat: "산미와 쓴맛",
+    q: "커피의 쓴맛(Bitterness)의 주요 원인이 되는 것은?",
+    opts: [
+      "유기산(Organic Acids)과 발효 과정",
+      "카페인과 로스팅 과정에서 생성되는 화합물",
+      "마우스필의 무게감(Heaviness)",
+      "후비강성 경로를 통한 향기 성분"
+    ],
+    ans: 1,
+    exp: "쓴맛(Bitterness)은 카페인과 로스팅 과정에서 생성되는 화합물에 의해 발현되는 기본 맛입니다. 신맛과 함께 커피 플레이버에 가장 큰 영향을 줍니다."
+  }
+];
+
+let order = [], qi = 0, score = 0, answered = false;
+let results = []; // track per-question result
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function init() {
+  order = shuffle([...Array(questions.length).keys()]);
+  qi = 0; score = 0; answered = false; results = [];
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (qi >= order.length) {
+    renderResult(app);
+    return;
+  }
+  const q = questions[order[qi]];
+  const pct = Math.round(qi / order.length * 100);
+  const nums = ['①','②','③','④'];
+  app.innerHTML = `
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="pfill" style="width:${pct}%"></div></div>
+    <div class="q-header">
+      <span class="q-num">문제 ${qi + 1} / ${order.length}</span>
+      <span class="q-score">점수: ${score}</span>
+    </div>
+    <span class="cat-tag">${q.cat}</span>
+    <div class="q-text">${q.q}</div>
+    <div class="options">
+      ${q.opts.map((o, i) => `<button class="opt-btn" id="opt${i}" onclick="choose(${i})">${nums[i]} ${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="nav-row">
+      <button class="next-btn" id="nxt" style="display:none" onclick="next()">
+        ${qi + 1 < order.length ? '다음 문제 →' : '결과 보기 →'}
+      </button>
+    </div>
+  `;
+}
+
+function choose(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[order[qi]];
+  const fb = document.getElementById('fb');
+  const nums = ['①','②','③','④'];
+  q.opts.forEach((_, idx) => {
+    const btn = document.getElementById('opt' + idx);
+    btn.disabled = true;
+    if (idx === q.ans) btn.classList.add('reveal');
+  });
+  const chosen = document.getElementById('opt' + i);
+  const correct = i === q.ans;
+  if (correct) {
+    score++;
+    chosen.classList.remove('reveal');
+    chosen.classList.add('correct');
+    fb.className = 'feedback show ok';
+    fb.innerHTML = `<strong>✓ 정답!</strong> ${q.exp}`;
+  } else {
+    chosen.classList.add('wrong');
+    fb.className = 'feedback show ng';
+    fb.innerHTML = `<strong>✗ 오답.</strong> ${q.exp}`;
+  }
+  results.push({ q, chosen: i, correct });
+  document.getElementById('nxt').style.display = 'inline-block';
+}
+
+function next() {
+  qi++;
+  answered = false;
+  render();
+}
+
+function renderResult(app) {
+  const total = order.length;
+  const pct = Math.round(score / total * 100);
+  let msg = pct >= 80 ? "🎉 훌륭합니다! 시험 준비가 잘 되어 있습니다." :
+            pct >= 60 ? "👍 좋습니다! 틀린 문제를 한 번 더 복습해보세요." :
+            "📚 더 많은 복습이 필요합니다. 파이팅!";
+
+  const wrongItems = results.filter(r => !r.correct);
+  const wrongHTML = wrongItems.length === 0
+    ? '<p style="font-size:14px;color:#3B6D11;text-align:center;padding:1rem 0;">모든 문제를 맞혔습니다! 🎉</p>'
+    : wrongItems.map(r => `
+        <div class="review-item wrong-item">
+          <div class="review-status ng">✗ 오답</div>
+          <div class="review-q">${r.q.q}</div>
+          <div class="review-exp"><strong>정답:</strong> ${r.q.opts[r.q.ans]}<br><strong>해설:</strong> ${r.q.exp}</div>
+        </div>`).join('');
+
+  app.innerHTML = `
+    <div class="result-box">
+      <div class="result-score">${score}<span style="font-size:28px;font-weight:400;color:#aaa">/${total}</span></div>
+      <div class="result-sub">정답률 ${pct}%</div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-grid">
+        <div class="r-card"><div class="r-card-label">정답</div><div class="r-card-val r-green">${score}문제</div></div>
+        <div class="r-card"><div class="r-card-label">오답</div><div class="r-card-val r-red">${total - score}문제</div></div>
+        <div class="r-card"><div class="r-card-label">정답률</div><div class="r-card-val r-blue">${pct}%</div></div>
+      </div>
+      <button class="retry-btn" onclick="init()">다시 풀기</button>
+    </div>
+    ${wrongItems.length > 0 ? `<div class="review-section"><h2>오답 노트 (${wrongItems.length}문제)</h2>${wrongHTML}</div>` : ''}
+  `;
+}
+
+init();
+</script>
+</body>
+</html>
